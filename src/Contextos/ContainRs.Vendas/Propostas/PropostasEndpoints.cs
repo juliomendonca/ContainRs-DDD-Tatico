@@ -123,8 +123,8 @@ public static class PropostasEndpoints
             [FromRoute] Guid propostaId,
             [FromServices] IPropostaService service) =>
         {
-            var comando = new AprovarProposta(id, propostaId);
-            var proposta = await service.AprovarAsync(comando);
+            var casoUso = new AprovarProposta(id, propostaId);
+            var proposta = await service.AprovarAsync(casoUso);            
             if (proposta is null) return Results.NotFound();
             return Results.Ok(PropostaResponse.From(proposta));
         })

@@ -1,18 +1,18 @@
-﻿using ContainRs.Contracts;
-using ContainRs.Vendas.Locacoes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using ContainRs.Vendas.Locacoes;
 using System.Transactions;
+using ContainRs.Contracts;
 
 namespace ContainRs.Vendas.Propostas;
 
 public interface IPropostaService
 {
     Task<Proposta?> AprovarAsync(AprovarProposta comando);
+    Task<Proposta?> ComentarAsync(ComentarProposta comando);
 }
 
 public class PropostaService : IPropostaService
@@ -32,7 +32,7 @@ public class PropostaService : IPropostaService
                 .GetFirstAsync(
                     p => p.Id == comando.IdProposta && p.SolicitacaoId == comando.IdPedido,
                     p => p.Id);
-        if (proposta is null) return proposta;
+        if (proposta is null) return null;
 
         proposta.Situacao = SituacaoProposta.Aceita;
 
@@ -51,6 +51,27 @@ public class PropostaService : IPropostaService
         await repoLocacao.AddAsync(locacao);
 
         scope.Complete();
+        return proposta;
+    }
+
+    public async Task<Proposta?> ComentarAsync(ComentarProposta comando)
+    {
+        var proposta = await repoProposta
+                .GetFirstAsync(
+                    p => p.Id == comando.IdProposta && p.SolicitacaoId == comando.IdPedido,
+                    p => p.Id);
+        if (proposta is null) return null;
+
+        
+        proposta.AddComentario(new Comentario()
+        {
+            Id = Guid.NewGuid(),
+            Data = DateTime.Now,
+            Usuario = comando.Pessoa,
+            Texto = comando.Mensagem
+        });
+
+        await repoProposta.UpdateAsync(proposta);
         return proposta;
     }
 }

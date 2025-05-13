@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ContainRs.Vendas.Locacoes;
-using System.Transactions;
-using ContainRs.Contracts;
 
 namespace ContainRs.Vendas.Propostas;
-
-public class AprovarProposta
+public class ComentarProposta
 {
-    public AprovarProposta(Guid idPedido, Guid idProposta)
+    public ComentarProposta(Guid idPedido, Guid idProposta, string mensagem, string pessoa)
     {
         IdPedido = idPedido;
         IdProposta = idProposta;
+        Mensagem = mensagem;
+        Pessoa = pessoa;
     }
 
     public Guid IdPedido { get; }
     public Guid IdProposta { get; }
+    public string Mensagem { get; }
+    public string Pessoa { get; }
 }
